@@ -9,8 +9,8 @@
 
 
 #include <cv.hpp>
-#include <highgui.hpp>
-#include <core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/core.hpp>
 #include <cxcore.hpp>
 
 
@@ -28,7 +28,7 @@ public:
     float dMean;
     float dGain;
   };
-  
+
   CalibCornerPatch(int nSideSize = 8);
   //bool IterateOnImage(Params &params, CVD::Image<CVD::byte> &im);
   bool IterateOnImage(Params &params, cv::Mat_<uchar> &im);
@@ -43,7 +43,7 @@ public:
   cv::Mat_<float> mimTemplate;
   cv::Mat_<cv::Vec2f > mimGradients;
   cv::Mat_<cv::Vec2f > mimAngleJacs;
-  
+
   void MakeSharedTemplate();
   static cv::Mat_<float> mimSharedSourceTemplate;
 

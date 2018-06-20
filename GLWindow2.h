@@ -15,9 +15,9 @@
 //#include <cvd/glwindow.h>
 //#include <TooN/TooN.h>
 
-#include <core.hpp>
+#include <opencv2/core.hpp>
 #include <cv.hpp>
-#include <highgui.hpp>
+#include <opencv2/highgui.hpp>
 
 #include <GL/gl.h>
 #include <GL/glut.h>
@@ -34,14 +34,14 @@ using namespace GLXInterface;
 class GLWindowMenu;
 
 enum GUICommand { ccmd_GrabNextFrame,
-			    ccmd_Reset,
-			    ccmd_ShowNext,
-			    ccmd_SaveCalib,
-			    ccmd_Quit,
-			    ccmd_Optimize,
-			    ccmd_ShowGrabbedFrame,
-			    ccmd_ToggleNoDist,
-			    ccmd_Exit };
+                            ccmd_Reset,
+                            ccmd_ShowNext,
+                            ccmd_SaveCalib,
+                            ccmd_Quit,
+                            ccmd_Optimize,
+                            ccmd_ShowGrabbedFrame,
+                            ccmd_ToggleNoDist,
+                            ccmd_Exit };
 
 
 //class GLWindow2 : public CVD::GLWindow, public CVD::GLWindow::EventHandler
@@ -49,18 +49,18 @@ class GLWindow2 : public GLWindow, public GLWindow::EventHandler
 {
 
 public:
-  
-  
-  
+
+
+
   GLWindow2(cv::Size2i irSize, std::string sTitle);
-  
+
   // The preferred event handler..
   void HandlePendingEvents();
-  
+
   // Menu interface:
   void AddMenu(std::string sName, std::string sTitle);
   void DrawMenus();
-  
+
   // Some OpenGL helpers:
   void SetupViewport();
   void SetupVideoOrtho();
@@ -71,23 +71,23 @@ public:
   // Text display functions:
   void PrintString(cv::Point2i irPos, std::string s);
   void DrawCaption(std::string s);
-  
+
   // Map viewer mouse interface:
   std::pair< cv::Vec<float, 6>, cv::Vec<float, 6> > GetMousePoseUpdate();
-  
+
   void addMyMenus();
-  
+
 
 protected:
   void GUICommandHandler(std::string sCommand, std::string sParams);
   static void GUICommandCallBack(void* ptr, std::string sCommand, std::string sParams);
-  
-  
+
+
   // User interface menus:
   std::vector<GLWindowMenu*> mvpGLWindowMenus;
 
   cv::Size2i mirVideoSize;   // The size of the source video material.
-  
+
 
   // Event handling routines:
   virtual void on_key_down(GLWindow&, int key);
@@ -99,7 +99,7 @@ protected:
   // Storage for map viewer updates:
   cv::Vec<float, 6> mvMCPoseUpdate;
   cv::Vec<float, 6> mvLeftPoseUpdate;
-  
+
 
 };
 
