@@ -10,6 +10,7 @@
 #ifndef __MESTIMATOR_H
 #define __MESTIMATOR_H
 
+#include <cmath>
 #include <vector>
 #include <algorithm>
 #include <cassert>
@@ -73,12 +74,12 @@ inline double Tukey::ObjectiveScore(double dErrorSquared, const double dSigmaSqu
 
 
 inline double Tukey::FindSigmaSquared(std::vector<double> &vdErrorSquared)
-{ 
-  double dSigmaSquared; 
+{
+  double dSigmaSquared;
   assert(vdErrorSquared.size() > 0);
   std::sort(vdErrorSquared.begin(), vdErrorSquared.end());
   double dMedianSquared = vdErrorSquared[vdErrorSquared.size() / 2];
-  double dSigma = 1.4826 * (1 + 5.0 / (vdErrorSquared.size() * 2 - 6)) * sqrt(dMedianSquared);
+  double dSigma = 1.4826 * (1 + 5.0 / (vdErrorSquared.size() * 2 - 6)) * std::sqrt(dMedianSquared);
   dSigma =  4.6851 * dSigma;
   dSigmaSquared = dSigma * dSigma;
   return dSigmaSquared;
@@ -107,8 +108,8 @@ inline double Cauchy::ObjectiveScore(double dErrorSquared, const double dSigmaSq
 
 
 inline double Cauchy::FindSigmaSquared(std::vector<double> &vdErrorSquared)
-{ 
-  double dSigmaSquared; 
+{
+  double dSigmaSquared;
   assert(vdErrorSquared.size() > 0);
   std::sort(vdErrorSquared.begin(), vdErrorSquared.end());
   double dMedianSquared = vdErrorSquared[vdErrorSquared.size() / 2];
@@ -151,8 +152,8 @@ inline double Huber::ObjectiveScore(double dErrorSquared, const double dSigmaSqu
 
 
 inline double Huber::FindSigmaSquared(std::vector<double> &vdErrorSquared)
-{ 
-  double dSigmaSquared; 
+{
+  double dSigmaSquared;
   assert(vdErrorSquared.size() > 0);
   std::sort(vdErrorSquared.begin(), vdErrorSquared.end());
   double dMedianSquared = vdErrorSquared[vdErrorSquared.size() / 2];
@@ -184,7 +185,7 @@ inline double LeastSquares::ObjectiveScore(double dErrorSquared, const double dS
 
 
 inline double LeastSquares::FindSigmaSquared(std::vector<double> &vdErrorSquared)
-{ 
+{
   if(vdErrorSquared.size() == 0)
     return 0.0;
   double dSum = 0.0;

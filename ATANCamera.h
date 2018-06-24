@@ -31,10 +31,10 @@
 // to a unit square coordinate system, with the top-left at 0,0,
 // and the bottom-right at 1,1
 // This is useful for rendering into textures! The top-left pixel is NOT
-// centered at 0,0, rather the top-left corner of the top-left pixel is at 
+// centered at 0,0, rather the top-left corner of the top-left pixel is at
 // 0,0!!! This is the way OpenGL thinks of pixel coords.
-// There's the Linear and the Distorting version - 
-// For the linear version, can use 
+// There's the Linear and the Distorting version -
+// For the linear version, can use
 // glMatrixMode(GL_PROJECTION); glLoadIdentity();
 // glMultMatrix(Camera.MakeUFBLinearFrustumMatrix(near,far));
 // To render un-distorted geometry with full frame coverage.
@@ -71,18 +71,18 @@ class ATANCamera {
  public:
    // Default camera parameters
   static cv::Vec<float, NUMTRACKERCAMPARAMETERS> mvDefaultParams;
-  
+
   ATANCamera(std::string sName, const cv::Size2i imgsize = cv::Size2i(DEFAULT_IMG_WIDTH, DEFAULT_IMG_HEIGHT) );
-  
+
   // Image size get/set: updates the internal projection params to that target image size.
   inline void SetImageSize(const cv::Size2i &vImageSize) { mvImageSize = vImageSize; RefreshParams(); }
 
-  
+
   cv::Size2i GetImageSize() {return mvImageSize;};
   void RefreshParams();
-  
+
   // ************ Various projection functions (I moved the projection/backprojection functions here because ther are INLINE ********
-  
+
   // Project from the normalized EUCLIDEAN camera plane (z=1) to image pixels (radian distortion compensation takes place in Euclidean coordinates)
   // while storing intermediate calculation results in member variables.
   // In terms of radial distortion, we MUST distort the Euclidean coordinates before we dump them on the image. Thuse, we premultiply the coporindates
@@ -92,16 +92,16 @@ class ATANCamera {
     mvLastCam[1] = vNormEuc(1, 0);
     // get the distance from the origin in the Euclidean projection plane n mdLastR
     mdLastR = cv::norm(mvLastCam); // This is the undistorted (presumably) radius of the normalized Euclidean coordinates
-    mbInvalid = (mdLastR > mdMaxR); // We cant have a radius beyond the maximum radius 
-				  // (as estimated from image border back-projections/un-projections in refreshparams()
-    mdLastFactor = rtrans_factor(mdLastR); // so rtrans_factor is the DISTORTION factor function 
+    mbInvalid = (mdLastR > mdMaxR); // We cant have a radius beyond the maximum radius
+                                  // (as estimated from image border back-projections/un-projections in refreshparams()
+    mdLastFactor = rtrans_factor(mdLastR); // so rtrans_factor is the DISTORTION factor function
     mdLastDistR = mdLastFactor * mdLastR;  // Get the distorted radius and chache it for potential use in Jacobian computations
     mvLastDistCam = mdLastFactor * mvLastCam; // Now get the distorted coordinates
-  
+
     // having the distorted normalized Euclidean coordinates, we can now project on the image (and chache the result in mvLastIm)...
     mvLastIm[0] = mvCenter[0] + mvFocal[0] * mvLastDistCam[0];
     mvLastIm[1] = mvCenter[1] + mvFocal[1] * mvLastDistCam[1];
-  
+
     return mvLastIm;
   }
 
@@ -109,31 +109,31 @@ class ATANCamera {
     mvLastCam = cv::Vec2f(xe, ye);
     // get the distance from the origin in the Euclidean projection plane n mdLastR
     mdLastR = cv::norm(mvLastCam); // This is the undistorted (presumably) radius of the normalized Euclidean coordinates
-    mbInvalid = (mdLastR > mdMaxR); // We cant have a radius beyond the maximum radius 
-				  // (as estimated from image border back-projections/un-projections in refreshparams()
-    mdLastFactor = rtrans_factor(mdLastR); // so rtrans_factor is the DISTORTION factor function 
+    mbInvalid = (mdLastR > mdMaxR); // We cant have a radius beyond the maximum radius
+                                  // (as estimated from image border back-projections/un-projections in refreshparams()
+    mdLastFactor = rtrans_factor(mdLastR); // so rtrans_factor is the DISTORTION factor function
     mdLastDistR = mdLastFactor * mdLastR;  // Get the distorted radius and chache it for potential use in Jacobian computations
     mvLastDistCam = mdLastFactor * mvLastCam; // Now get the distorted coordinates
-  
+
     // having the distorted normalized Euclidean coordinates, we can now project on the image (and chache the result in mvLastIm)...
     mvLastIm[0] = mvCenter[0] + mvFocal[0] * mvLastDistCam[0];
     mvLastIm[1] = mvCenter[1] + mvFocal[1] * mvLastDistCam[1];
-  
+
     return mvLastIm;
   }
 
   // Un-project from image pixel coords to the  normalized Euclidean (z=1) camera  plane
   // while storing intermediate calculation results in member variables
   inline cv::Vec2f UnProject(const cv::Matx<float, 2, 1> &v2Im) {
-    
+
     // store image location
-    mvLastIm[0] = v2Im(0, 0); 
-    mvLastIm[1] = v2Im(1, 0); 
+    mvLastIm[0] = v2Im(0, 0);
+    mvLastIm[1] = v2Im(1, 0);
     // Now unproject to a distorted Euclidean space
     mvLastDistCam[0] = (mvLastIm[0] - mvCenter[0]) * mvInvFocal[0];
     mvLastDistCam[1] = (mvLastIm[1] - mvCenter[1]) * mvInvFocal[1];
     // Now, mvLastDistCam contains the DISTORTED Euclidean coordinates of the imaged point
-  
+
     // So now we compensate for radial distortion. Store the distorted radius in mdLastDistR .
     mdLastDistR = cv::norm(mvLastDistCam);
     // mdLastR now becomes the undistorted radius
@@ -147,21 +147,21 @@ class ATANCamera {
     mdLastFactor = 1.0 / dFactor;
     // storing the undistorted Euclidean coordinates
     mvLastCam = dFactor * mvLastDistCam;
-  
+
     // return undistorted normalized Euclidean coordinates
     return mvLastCam;
   }
 
 
   inline cv::Vec2f UnProject(float x, float y) {
-    
+
     // store image location
-    mvLastIm = cv::Vec2f(x, y); 
+    mvLastIm = cv::Vec2f(x, y);
     // Now unproject to a distorted Euclidean space
     mvLastDistCam[0] = (mvLastIm[0] - mvCenter[0]) * mvInvFocal[0];
     mvLastDistCam[1] = (mvLastIm[1] - mvCenter[1]) * mvInvFocal[1];
     // Now, mvLastDistCam contains the DISTORTED Euclidean coordinates of the imaged point
-  
+
     // So now we compensate for radial distortion. Store the distorted radius in mdLastDistR .
     mdLastDistR = cv::norm(mvLastDistCam);
     // mdLastR now becomes the undistorted radius
@@ -175,44 +175,44 @@ class ATANCamera {
     mdLastFactor = 1.0 / dFactor;
     // storing the undistorted Euclidean coordinates
     mvLastCam = dFactor * mvLastDistCam;
-  
+
     // return undistorted normalized Euclidean coordinates
     return mvLastCam;
   }
-  
+
   cv::Vec2f UFBProject(const cv::Matx<float, 2, 1> &camframe);
   cv::Vec2f UFBUnProject(const cv::Matx<float, 2, 1> &camframe);
   inline cv::Vec2f UFBLinearProject(const cv::Matx<float, 2, 1> &camframe);
   inline cv::Vec2f UFBLinearUnProject(const cv::Matx<float, 2, 1> &fbframe);
-  
+
   cv::Matx<float, 2, 2> GetProjectionDerivs(); // 2x2 Projection jacobian
-  
+
   inline bool Invalid() {  return mbInvalid;}
   inline double LargestRadiusInImage() {  return mdLargestRadius; }
   inline double OnePixelDist() { return mdOnePixelDist; }
-  
+
   // The z=1 plane bounding box of what the camera can see
-  inline cv::Vec2f ImplaneTL(); 
-  inline cv::Vec2f ImplaneBR(); 
+  inline cv::Vec2f ImplaneTL();
+  inline cv::Vec2f ImplaneBR();
 
   // OpenGL helper function
   cv::Matx<float, 4, 4> MakeUFBLinearFrustumMatrix(float near, float far); // Returns A 4x4 matrix
-  
+
   // Feedback for Camera Calibrator
   double PixelAspectRatio() { return mvFocal[1] / mvFocal[0];}
-  
-  
-  
-  
-  
+
+
+
+
+
  protected:
   Persistence::pvar3<cv::Vec<float, NUMTRACKERCAMPARAMETERS> > mpvvCameraParams; // The actual camera parameters
-  
+
   cv::Matx<float, 2, NUMTRACKERCAMPARAMETERS> GetCamParamAnalyticalDerivs();
   cv::Matx<float, 2, NUMTRACKERCAMPARAMETERS> GetCameraParameterDerivs(); // 2x NUMTRACKERCAMPARAMETERS
   void UpdateParams(cv::Vec<float, NUMTRACKERCAMPARAMETERS> vUpdate);
   void DisableRadialDistortion();
-  
+
   // Cached from the last project/unproject:
   cv::Vec2f mvLastCam;      // Last z=1 coord
   cv::Vec2f mvLastIm;       // Last image/UFB coord
@@ -221,7 +221,7 @@ class ATANCamera {
   double mdLastDistR;       // Last z=1 distorted radius
   double mdLastFactor;      // Last ratio of z=1 radii
   bool mbInvalid;           // Was the last projection invalid?
-  
+
   // Cached from last RefreshParams:
   float mdLargestRadius; // Largest R in the image
   float mdMaxR;          // Largest R for which we consider projection valid
@@ -234,33 +234,33 @@ class ATANCamera {
   cv::Vec2f mvCenter;     // Pixel projection center
   cv::Vec2f mvFocal;      // Pixel focal length
   cv::Vec2f mvInvFocal;   // Inverse pixel focal length
-  cv::Size2i mvImageSize;  
+  cv::Size2i mvImageSize;
   cv::Vec2f mvUFBLinearFocal;
   cv::Vec2f mvUFBLinearInvFocal;
   cv::Vec2f mvUFBLinearCenter;
-  cv::Vec2f mvImplaneTL;   
+  cv::Vec2f mvImplaneTL;
   cv::Vec2f mvImplaneBR;
-  
+
   // Radial distortion transformation factor: returns ratio of distorted / undistorted radius.
-  // George: This IS the correction factor in the projection model: 
+  // George: This IS the correction factor in the projection model:
   // You need to multiply the Euclidean normalized coordinates by this factor BEFORE you project them onto the image
   // reason being, we have to "distort" the coordinates before we send them to the image
   /// Returns the distorted radius on the normalized Euclidean plane divided by the undistorted one
   /// This factor can be used verbatoc for projection to the image
   inline float rtrans_factor(float r)
   {
-    if(r < 0.001 || mdW == 0.0) return 1.0;
-    else 
-      return (mdWinv* atan(r * md2Tan) / r); // 1/w * atan(2*ru*tan(w/2)) / ru 
-  };
+    if(r < 0.001f || mdW == 0.0f) return 1.0;
+    else
+      return (mdWinv* atan(r * md2Tan) / r); // 1/w * atan(2*ru*tan(w/2)) / ru
+  }
 
   // Inverse radial distortion: returns un-distorted radius from distorted.
   inline float invrtrans(float r)
   {
-    if(mdW == 0.0) return r;
+    if(mdW == 0.0f) return r;
     return(tan(r * mdW) * mdOneOver2Tan); // mdOneOver2Tan is a radial distortion coefficient (see the paper by Devernay - Faugeras)
-  };
-  
+  }
+
   std::string msName;
 
   friend class CameraCalibrator;   // friend declarations allow access to calibration jacobian and camera update function.

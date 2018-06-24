@@ -51,7 +51,8 @@ SOURCES += \
     SmallBlurryImage.cpp \
     System.cpp \
     Tracker.cpp \
-    VideoSource.cpp
+    ifvideosource.cpp \
+    VideoSource/cvvideocapture.cpp
 
 HEADERS += \
     FAST/fast_corner.h \
@@ -112,7 +113,8 @@ HEADERS += \
     System.h \
     Tracker.h \
     TrackerData.h \
-    VideoSource.h
+    ifvideosource.h \
+    VideoSource/cvvideocapture.h
 
 CONFIG += link_pkgconfig
 PKGCONFIG += opencv

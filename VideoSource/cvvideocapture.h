@@ -3,7 +3,7 @@
 //
 // VideoSource.h
 // Declares the VideoSource class
-// 
+//
 // This is a very simple class to provide video input; this can be
 // replaced with whatever form of video input that is needed.  It
 // should open the video input on construction, and provide two
@@ -13,22 +13,21 @@
 // GreyScale and Colour versions of the new frame.
 
 #include "OpenCV.h"
+#include "../ifvideosource.h"
 
-using namespace cv;
-
-struct VideoSourceData;
-
-class VideoSource
+namespace gptam
 {
- public:
-  VideoSource();
-  
-  void GetAndFillFrameBWandRGB(cv::Mat_<uchar> &imBW, cv::Mat &imRGB);
-  
-  cv::Size2i getSize();
-  
- private:
-  cv::VideoCapture *pcap;
-  
-  cv::Size2i mirSize;
+
+class cv_video_capture: public if_video_source
+{
+public:
+        cv_video_capture();
+
+        void            GetAndFillFrameBWandRGB(cv::Mat_<uchar> &imBW, cv::Mat &imRGB) override;
+        cv::Size2i      getSize() override;
+private:
+        cv::VideoCapture *pcap;
+        cv::Size2i mirSize;
 };
+
+}

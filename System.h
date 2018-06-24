@@ -11,7 +11,7 @@
 #ifndef __SYSTEM_H
 #define __SYSTEM_H
 
-#include "VideoSource.h"
+#include "ifvideosource.h"
 #include "GLWindow2.h"
 
 
@@ -24,30 +24,34 @@ class Tracker;
 class ARDriver;
 class MapViewer;
 
+namespace gptam
+{
+
 class System
 {
 public:
-  System();
-  void Run();
-  
-private:
-  VideoSource mVideoSource;
-  GLWindow2 mGLWindow;
-  cv::Mat mimFrameRGB;
-  cv::Mat_<uchar> mimFrameBW;
-  
-  Map *mpMap; 
-  MapMaker *mpMapMaker; 
-  Tracker *mpTracker; 
-  ATANCamera *mpCamera;
-  ARDriver *mpARDriver;
-  MapViewer *mpMapViewer;
-  
-  bool mbDone;
+        System();
+        void Run();
 
-  static void GUICommandCallBack(void* ptr, std::string sCommand, std::string sParams);
+private:
+        if_video_source*        mVideoSource;
+        GLWindow2 mGLWindow;
+        cv::Mat mimFrameRGB;
+        cv::Mat_<uchar> mimFrameBW;
+
+        Map *mpMap;
+        MapMaker *mpMapMaker;
+        Tracker *mpTracker;
+        ATANCamera *mpCamera;
+        ARDriver *mpARDriver;
+        MapViewer *mpMapViewer;
+
+        bool mbDone;
+
+        static void GUICommandCallBack(void* ptr, std::string sCommand, std::string sParams);
 };
 
+}
 
 
 #endif
